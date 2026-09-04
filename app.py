@@ -3,8 +3,13 @@ import json
 from typing import List, Dict, Any
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import uvicorn
+from dotenv import load_dotenv
+
+# Load .env file if present (GEMINI_API_KEY must be set here or in environment)
+load_dotenv()
 
 from src.models import Alert, Incident
 from src.alert_processor import AlertProcessor
@@ -89,8 +94,29 @@ async def run_demo(scenario: str):
     """Placeholder for triggering specific demo flows."""
     return {"status": "ok", "scenario_triggered": scenario}
 
-if os.path.exists("frontend") and os.path.isdir("frontend"):
-    app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+# Serve frontend static files — mounted LAST so all /api/* routes take precedence.
+# StaticFiles with html=True will serve index.html for unknown paths (SPA mode).
+FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "frontend")
+if os.path.isdir(FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    import threading
+    import webbrowser
+
+    def _open_browser():
+        """
+        Open the dashboard in the default browser once Uvicorn is ready.
+        Runs in a daemon thread so it never blocks server shutdown.
+        Always targets localhost (not 0.0.0.0) for correct browser behaviour.
+        """
+        import time
+        time.sleep(1.5)  # Give Uvicorn enough time to bind and start serving.
+        webbrowser.open("http://localhost:8000")
+
+    # Start the browser-opener thread BEFORE uvicorn.run() blocks the main thread.
+    _browser_thread = threading.Thread(target=_open_browser, daemon=True)
+    _browser_thread.start()
+
+    # Production / hackathon startup — single command, no reload.
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=False)
