@@ -1,0 +1,14 @@
+[
+  {
+    "link_id": "LNK-001",
+    "source": "RTR-CORE-01",
+    "target": "SW-DIST-01",
+    "capacity": "10G"
+  },
+  {
+    "link_id": "LNK-002",
+    "source": "SW-DIST-01",
+    "target": "SW-ACCESS-10",
+    "capacity": "1G"
+  }
+]

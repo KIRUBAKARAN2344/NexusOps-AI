@@ -1,0 +1,26 @@
+[
+  {
+    "device_id": "RTR-CORE-01",
+    "type": "Router",
+    "location": "Datacenter-A",
+    "status": "active"
+  },
+  {
+    "device_id": "SW-DIST-01",
+    "type": "Switch",
+    "location": "Datacenter-A",
+    "status": "active"
+  },
+  {
+    "device_id": "SW-ACCESS-10",
+    "type": "Switch",
+    "location": "Floor-1",
+    "status": "active"
+  },
+  {
+    "device_id": "FW-EDGE-01",
+    "type": "Firewall",
+    "location": "Datacenter-A",
+    "status": "active"
+  }
+]

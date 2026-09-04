@@ -1,0 +1,74 @@
+[
+  {
+    "alert_id": "ALT-001",
+    "timestamp": "2026-09-04T10:00:00Z",
+    "device_id": "SW-ACCESS-10",
+    "alert_type": "cpu_util_high",
+    "severity": "INFO",
+    "message": "CPU utilization reached 75%",
+    "metadata": {
+      "cpu_val": 75
+    }
+  },
+  {
+    "alert_id": "ALT-002",
+    "timestamp": "2026-09-04T10:05:00Z",
+    "device_id": "RTR-CORE-01",
+    "alert_type": "link_down",
+    "severity": "CRITICAL",
+    "message": "Interface GigabitEthernet0/1 to SW-DIST-01 is DOWN",
+    "metadata": {
+      "interface": "GigabitEthernet0/1",
+      "peer": "SW-DIST-01"
+    }
+  },
+  {
+    "alert_id": "ALT-003",
+    "timestamp": "2026-09-04T10:05:01Z",
+    "device_id": "SW-DIST-01",
+    "alert_type": "bgp_neighbor_lost",
+    "severity": "HIGH",
+    "message": "BGP peer RTR-CORE-01 down",
+    "metadata": {
+      "peer": "RTR-CORE-01"
+    }
+  },
+  {
+    "alert_id": "ALT-004",
+    "timestamp": "2026-09-04T10:05:05Z",
+    "device_id": "SW-ACCESS-10",
+    "alert_type": "device_unreachable",
+    "severity": "CRITICAL",
+    "message": "Device not responding to ping",
+    "metadata": {}
+  },
+  {
+    "alert_id": "ALT-005",
+    "timestamp": "2026-09-04T10:05:05Z",
+    "device_id": "SW-ACCESS-10",
+    "alert_type": "device_unreachable",
+    "severity": "CRITICAL",
+    "message": "Device not responding to ping",
+    "metadata": {}
+  },
+  {
+    "alert_id": "ALT-006",
+    "timestamp": "2026-09-04T10:30:00Z",
+    "device_id": "FW-EDGE-01",
+    "alert_type": "anomaly_detected",
+    "severity": "HIGH",
+    "message": "Unknown encrypted traffic spike",
+    "metadata": {
+      "bytes": "50GB"
+    }
+  },
+  {
+    "alert_id": "ALT-007",
+    "timestamp": "2026-09-04T10:30:05Z",
+    "device_id": "FW-EDGE-01",
+    "alert_type": "memory_leak_warning",
+    "severity": "MEDIUM",
+    "message": "Memory leaking in security module",
+    "metadata": {}
+  }
+]

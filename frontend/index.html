@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusOps AI - Triage Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="pulse"></span>
+            <h1>NexusOps AI</h1>
+        </div>
+        <div class="actions">
+            <button id="btn-analyze" class="btn primary">Start Triage Pipeline</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Status Dashboard -->
+        <section class="dashboard">
+            <div class="stat-card">
+                <h3>Total Alerts</h3>
+                <div class="value" id="stat-alerts">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Correlated Incidents</h3>
+                <div class="value" id="stat-incidents">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Noise / Unrelated</h3>
+                <div class="value" id="stat-noise">0</div>
+            </div>
+            <div class="stat-card critical">
+                <h3>Escalations</h3>
+                <div class="value" id="stat-escalations">0</div>
+            </div>
+        </section>
+
+        <div class="split-view">
+            <!-- Incidents Feed -->
+            <section class="incidents-panel">
+                <h2>Active Incidents</h2>
+                <div id="incidents-container" class="feed-container">
+                    <div class="empty-state">Run triage to analyze network alerts.</div>
+                </div>
+            </section>
+
+            <!-- Noise Feed -->
+            <section class="noise-panel">
+                <h2>Filtered Noise</h2>
+                <div id="noise-container" class="feed-container">
+                    <div class="empty-state">No noise detected.</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for Incident Details -->
+    <div id="incident-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Incident Details</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="badge-row">
+                    <span id="modal-priority" class="badge">P?</span>
+                    <span id="modal-status" class="badge outline">OPEN</span>
+                </div>
+                
+                <h3>Affected Devices</h3>
+                <p id="modal-devices"></p>
+
+                <h3>Correlated Alerts (<span id="modal-alert-count">0</span>)</h3>
+                <ul id="modal-alerts-list" class="alert-list"></ul>
+
+                <div class="ai-recommendation card">
+                    <div class="card-header">
+                        <h3>AI Recommendation</h3>
+                        <span id="modal-confidence" class="confidence-badge">--%</span>
+                    </div>
+                    <p id="modal-action" class="action-text"></p>
+                    
+                    <div id="escalation-alert" class="escalation-alert hidden">
+                        <strong>Escalation Required:</strong> <span id="escalation-reason"></span>
+                    </div>
+
+                    <h4>Evidence Citations</h4>
+                    <ul id="modal-evidence" class="evidence-list"></ul>
+                    
+                    <p class="runbook-ref">Sourced from Runbook: <strong id="modal-runbook">None</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
