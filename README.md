@@ -57,4 +57,4 @@ pytest tests/
 VALIDATION_KEY_PLACEHOLDER
 
 ## Demo Video
-[Demo Video Placeholder]
+https://youtu.be/Hz2WS7vJsvk
