@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 # Load .env file if present (GEMINI_API_KEY must be set here or in environment)
 load_dotenv()
 
+
 from src.models import Alert, Incident
 from src.alert_processor import AlertProcessor
 from src.incident_engine import IncidentEngine
@@ -36,6 +37,20 @@ class AnalysisResponse(BaseModel):
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "message": "NexusOps AI is running"}
+
+@app.get("/api/topology")
+async def get_topology():
+    devices_path = os.path.join(DATA_DIR, "devices.json")
+    links_path = os.path.join(DATA_DIR, "links.json")
+    devices = []
+    links = []
+    if os.path.exists(devices_path):
+        with open(devices_path, "r") as f:
+            devices = json.load(f)
+    if os.path.exists(links_path):
+        with open(links_path, "r") as f:
+            links = json.load(f)
+    return {"nodes": devices, "links": links}
 
 @app.get("/api/alerts")
 async def get_raw_alerts():

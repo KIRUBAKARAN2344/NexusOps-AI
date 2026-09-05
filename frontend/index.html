@@ -3,94 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusOps AI - Triage Assistant</title>
+    <title>NexusOps AI - Command Center</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <span class="pulse"></span>
-            <h1>NexusOps AI</h1>
-        </div>
-        <div class="actions">
-            <button id="btn-analyze" class="btn primary">Start Triage Pipeline</button>
-        </div>
-    </header>
-
-    <main>
-        <!-- Status Dashboard -->
-        <section class="dashboard">
-            <div class="stat-card">
-                <h3>Total Alerts</h3>
-                <div class="value" id="stat-alerts">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Correlated Incidents</h3>
-                <div class="value" id="stat-incidents">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Noise / Unrelated</h3>
-                <div class="value" id="stat-noise">0</div>
-            </div>
-            <div class="stat-card critical">
-                <h3>Escalations</h3>
-                <div class="value" id="stat-escalations">0</div>
-            </div>
-        </section>
-
-        <div class="split-view">
-            <!-- Incidents Feed -->
-            <section class="incidents-panel">
-                <h2>Active Incidents</h2>
-                <div id="incidents-container" class="feed-container">
-                    <div class="empty-state">Run triage to analyze network alerts.</div>
+    <div class="app-container">
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="logo">
+                <div class="nexus-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28">
+                        <path d="M12 2L2 12l10 10 10-10L12 2zm0 4l6 6-6 6-6-6 6-6z" fill="var(--cyan-accent)"/>
+                    </svg>
                 </div>
-            </section>
-
-            <!-- Noise Feed -->
-            <section class="noise-panel">
-                <h2>Filtered Noise</h2>
-                <div id="noise-container" class="feed-container">
-                    <div class="empty-state">No noise detected.</div>
+                <div class="logo-text">
+                    <h1>NEXUSOPS AI</h1>
+                    <span class="subtitle">Network Incident Intelligence Command Center</span>
                 </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Modal for Incident Details -->
-    <div id="incident-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Incident Details</h2>
-                <button class="close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="badge-row">
-                    <span id="modal-priority" class="badge">P?</span>
-                    <span id="modal-status" class="badge outline">OPEN</span>
+            
+            <div class="top-bar-center">
+                <div class="triage-pipeline" id="triage-pipeline">
+                    <div class="pipeline-step" data-step="ingest">INGEST</div>
+                    <div class="pipeline-divider"></div>
+                    <div class="pipeline-step" data-step="normalize">NORMALIZE</div>
+                    <div class="pipeline-divider"></div>
+                    <div class="pipeline-step" data-step="correlate">CORRELATE</div>
+                    <div class="pipeline-divider"></div>
+                    <div class="pipeline-step" data-step="prioritize">PRIORITIZE</div>
+                    <div class="pipeline-divider"></div>
+                    <div class="pipeline-step" data-step="retrieve">RETRIEVE</div>
+                    <div class="pipeline-divider"></div>
+                    <div class="pipeline-step" data-step="reason">REASON</div>
+                    <div class="pipeline-divider"></div>
+                    <div class="pipeline-step" data-step="cite">CITE</div>
                 </div>
+            </div>
+
+            <div class="top-bar-actions">
+                <div class="status-indicator">
+                    <span class="pulse status-ok"></span>
+                    <span class="status-text">SYSTEM ONLINE</span>
+                </div>
+                <div class="time-display" id="clock">00:00:00 UTC</div>
+                <button class="cmd-palette-btn" onclick="openCommandPalette()">
+                    <span class="cmd-icon">⌘</span> K
+                </button>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- LEFT SIDEBAR -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <a href="#" class="nav-item active"><span class="icon">⊞</span> Overview</a>
+                    <a href="#" class="nav-item"><span class="icon">⚠</span> Live Alerts</a>
+                    <a href="#" class="nav-item"><span class="icon">⚡</span> Incidents</a>
+                    <a href="#" class="nav-item"><span class="icon">⎈</span> Topology</a>
+                    <a href="#" class="nav-item"><span class="icon">📚</span> Runbooks</a>
+                    <a href="#" class="nav-item"><span class="icon">🛡️</span> Escalations</a>
+                    <a href="#" class="nav-item"><span class="icon">⚙</span> System Health</a>
+                </nav>
                 
-                <h3>Affected Devices</h3>
-                <p id="modal-devices"></p>
-
-                <h3>Correlated Alerts (<span id="modal-alert-count">0</span>)</h3>
-                <ul id="modal-alerts-list" class="alert-list"></ul>
-
-                <div class="ai-recommendation card">
-                    <div class="card-header">
-                        <h3>AI Recommendation</h3>
-                        <span id="modal-confidence" class="confidence-badge">--%</span>
+                <div class="ai-status-panel">
+                    <h3>AI SUBSYSTEMS</h3>
+                    <div class="subsystem-status">
+                        <span class="sub-label">Gemini Reasoning</span>
+                        <span class="sub-value ok">OK</span>
                     </div>
-                    <p id="modal-action" class="action-text"></p>
-                    
-                    <div id="escalation-alert" class="escalation-alert hidden">
-                        <strong>Escalation Required:</strong> <span id="escalation-reason"></span>
+                    <div class="subsystem-status">
+                        <span class="sub-label">Gemini Embeddings</span>
+                        <span class="sub-value ok">OK</span>
                     </div>
+                    <div class="subsystem-status">
+                        <span class="sub-label">FAISS Retrieval</span>
+                        <span class="sub-value ok">OK</span>
+                    </div>
+                    <div class="subsystem-status">
+                        <span class="sub-label">Incident Engine</span>
+                        <span class="sub-value ok">OK</span>
+                    </div>
+                </div>
+            </aside>
 
-                    <h4>Evidence Citations</h4>
-                    <ul id="modal-evidence" class="evidence-list"></ul>
+            <!-- MAIN DASHBOARD -->
+            <main class="dashboard-content">
+                <div class="hero-section">
+                    <div class="hero-text">
+                        <h2>Triage Operations</h2>
+                        <p>Analyze incoming alert streams and generate grounded resolutions.</p>
+                    </div>
+                    <div class="hero-actions">
+                        <div class="last-refresh" id="last-refresh">Last updated: Never</div>
+                        <button id="btn-analyze" class="btn primary-glow">
+                            <span class="btn-text">START TRIAGE PIPELINE</span>
+                            <span class="btn-icon">▶</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI AREA -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">TOTAL ALERTS</div>
+                        <div class="kpi-value" id="stat-alerts">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">ACTIVE INCIDENTS</div>
+                        <div class="kpi-value highlight-cyan" id="stat-incidents">0</div>
+                    </div>
+                    <div class="kpi-card critical-border">
+                        <div class="kpi-title">P1 CRITICAL</div>
+                        <div class="kpi-value highlight-danger" id="stat-p1">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">NOISE FILTERED</div>
+                        <div class="kpi-value text-muted" id="stat-noise">0</div>
+                    </div>
+                    <div class="kpi-card warning-border">
+                        <div class="kpi-title">ESCALATIONS</div>
+                        <div class="kpi-value highlight-warning" id="stat-escalations">0</div>
+                    </div>
+                    <div class="kpi-card success-border">
+                        <div class="kpi-title">AI GROUNDING</div>
+                        <div class="kpi-value highlight-success" id="stat-grounding">--%</div>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <!-- INCIDENTS -->
+                    <div class="panel incidents-panel">
+                        <div class="panel-header">
+                            <h3>ACTIVE INCIDENTS</h3>
+                            <div class="panel-actions">
+                                <span class="badge count-badge" id="incident-count-badge">0</span>
+                            </div>
+                        </div>
+                        <div class="panel-body scrollable" id="incidents-container">
+                            <div class="empty-state">
+                                <div class="empty-icon">⚲</div>
+                                <p>Awaiting pipeline execution.</p>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <p class="runbook-ref">Sourced from Runbook: <strong id="modal-runbook">None</strong></p>
+                    <div class="right-column-grid">
+                        <!-- TOPOLOGY -->
+                        <div class="panel topology-panel">
+                            <div class="panel-header">
+                                <h3>NETWORK TOPOLOGY</h3>
+                            </div>
+                            <div class="panel-body topology-container" id="topology-container">
+                                <canvas id="network-canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- ALERT STREAM / NOISE -->
+                        <div class="panel noise-panel">
+                            <div class="panel-header">
+                                <h3>ISOLATED NOISE</h3>
+                                <span class="badge outline-muted" id="noise-count-badge">0</span>
+                            </div>
+                            <div class="panel-body scrollable" id="noise-container">
+                                <div class="empty-state">
+                                    <p>No isolated signals.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- COMMAND PALETTE MODAL -->
+    <div id="cmd-palette-modal" class="modal hidden">
+        <div class="cmd-palette-content">
+            <input type="text" id="cmd-input" placeholder="Search incidents, alerts, commands..." autocomplete="off">
+            <div class="cmd-results" id="cmd-results">
+                <div class="cmd-item"><span>Search incidents...</span></div>
+                <div class="cmd-item"><span>Go to Topology</span></div>
+                <div class="cmd-item"><span>Run Pipeline</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INCIDENT DETAIL MODAL -->
+    <div id="incident-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h2 id="modal-title">INC-0000</h2>
+                    <span id="modal-priority" class="badge">P?</span>
+                    <span id="modal-status" class="badge status-open">OPEN</span>
+                </div>
+                <button class="icon-btn close-btn">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="incident-layout">
+                    <div class="incident-main-col">
+                        
+                        <div class="section-block">
+                            <h3>AFFECTED ASSETS</h3>
+                            <div class="asset-tags" id="modal-devices"></div>
+                        </div>
+
+                        <div class="section-block ai-assessment-block">
+                            <div class="assessment-header">
+                                <h3>AI ASSESSMENT</h3>
+                                <span id="modal-confidence" class="confidence-indicator">--% Confidence</span>
+                            </div>
+                            
+                            <div id="escalation-alert" class="escalation-banner hidden">
+                                <div class="esc-icon">⚠</div>
+                                <div class="esc-content">
+                                    <strong>ESCALATION REQUIRED</strong>
+                                    <p id="escalation-reason"></p>
+                                </div>
+                                <button class="btn utility" onclick="copyHandoff()">Copy Handoff Summary</button>
+                            </div>
+
+                            <div class="recommendation-box">
+                                <p id="modal-action" class="action-text"></p>
+                            </div>
+                            
+                            <div class="reasoning-summary">
+                                <h4>Reasoning Trace</h4>
+                                <ul class="trace-list">
+                                    <li><span class="trace-check">✓</span> Signal relationship verified</li>
+                                    <li><span class="trace-check" id="trace-runbook-status">✓</span> Runbook matched</li>
+                                    <li><span class="trace-check">✓</span> Evidence mapped</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="section-block">
+                            <h3>EVIDENCE CITATIONS</h3>
+                            <div class="evidence-box">
+                                <div class="runbook-ref">
+                                    <span class="ref-icon">📚</span> Source: <strong id="modal-runbook">None</strong>
+                                </div>
+                                <ul id="modal-evidence" class="evidence-list"></ul>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="incident-side-col">
+                        <div class="section-block">
+                            <h3>INCIDENT TIMELINE</h3>
+                            <div class="timeline" id="modal-timeline">
+                                <!-- Timeline items injected here -->
+                            </div>
+                        </div>
+                        
+                        <div class="section-block">
+                            <h3>ROOT SIGNALS (<span id="modal-alert-count">0</span>)</h3>
+                            <div class="root-signals-list scrollable" id="modal-alerts-list">
+                                <!-- Alert items injected here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
