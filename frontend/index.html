@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusOps AI - Command Center</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-active-view="overview">
     <div class="app-container">
         <!-- TOP BAR -->
         <header class="top-bar">
@@ -56,14 +56,15 @@
         <div class="main-layout">
             <!-- LEFT SIDEBAR -->
             <aside class="sidebar">
-                <nav class="nav-menu">
-                    <a href="#" class="nav-item active"><span class="icon">⊞</span> Overview</a>
-                    <a href="#" class="nav-item"><span class="icon">⚠</span> Live Alerts</a>
-                    <a href="#" class="nav-item"><span class="icon">⚡</span> Incidents</a>
-                    <a href="#" class="nav-item"><span class="icon">⎈</span> Topology</a>
-                    <a href="#" class="nav-item"><span class="icon">📚</span> Runbooks</a>
-                    <a href="#" class="nav-item"><span class="icon">🛡️</span> Escalations</a>
-                    <a href="#" class="nav-item"><span class="icon">⚙</span> System Health</a>
+                <nav class="nav-menu" id="sidebar-nav">
+                    <a href="#overview" class="nav-item active" data-target="overview"><span class="icon">⊞</span> Overview</a>
+                    <a href="#alerts" class="nav-item" data-target="alerts"><span class="icon">⚠</span> Live Alerts</a>
+                    <a href="#incidents" class="nav-item" data-target="incidents"><span class="icon">⚡</span> Incidents</a>
+                    <a href="#topology" class="nav-item" data-target="topology"><span class="icon">⎈</span> Topology</a>
+                    <a href="#runbooks" class="nav-item" data-target="runbooks"><span class="icon">📚</span> Runbooks</a>
+                    <a href="#escalations" class="nav-item" data-target="escalations"><span class="icon">🛡️</span> Escalations</a>
+                    <a href="#health" class="nav-item" data-target="health"><span class="icon">⚙</span> System Health</a>
+                    <a href="#settings" class="nav-item" data-target="settings"><span class="icon">🛠️</span> Settings</a>
                 </nav>
                 
                 <div class="ai-status-panel">
@@ -89,7 +90,7 @@
 
             <!-- MAIN DASHBOARD -->
             <main class="dashboard-content">
-                <div class="hero-section">
+                <div class="hero-section view-element" data-view="overview">
                     <div class="hero-text">
                         <h2>Triage Operations</h2>
                         <p>Analyze incoming alert streams and generate grounded resolutions.</p>
@@ -104,7 +105,7 @@
                 </div>
 
                 <!-- KPI AREA -->
-                <div class="kpi-grid">
+                <div class="kpi-grid view-element" data-view="overview">
                     <div class="kpi-card">
                         <div class="kpi-title">TOTAL ALERTS</div>
                         <div class="kpi-value" id="stat-alerts">0</div>
@@ -131,9 +132,9 @@
                     </div>
                 </div>
 
-                <div class="content-grid">
+                <div class="content-grid view-element" data-view="overview incidents topology alerts">
                     <!-- INCIDENTS -->
-                    <div class="panel incidents-panel">
+                    <div class="panel incidents-panel view-element" data-view="overview incidents">
                         <div class="panel-header">
                             <h3>ACTIVE INCIDENTS</h3>
                             <div class="panel-actions">
@@ -150,7 +151,7 @@
                     
                     <div class="right-column-grid">
                         <!-- TOPOLOGY -->
-                        <div class="panel topology-panel">
+                        <div class="panel topology-panel view-element" data-view="overview topology">
                             <div class="panel-header">
                                 <h3>NETWORK TOPOLOGY</h3>
                             </div>
@@ -160,7 +161,7 @@
                         </div>
 
                         <!-- ALERT STREAM / NOISE -->
-                        <div class="panel noise-panel">
+                        <div class="panel noise-panel view-element" data-view="overview alerts">
                             <div class="panel-header">
                                 <h3>ISOLATED NOISE</h3>
                                 <span class="badge outline-muted" id="noise-count-badge">0</span>
@@ -173,6 +174,69 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- NEW PANELS -->
+                <div class="panel view-element" data-view="runbooks">
+                    <div class="panel-header">
+                        <h3>RUNBOOKS & EVIDENCE</h3>
+                    </div>
+                    <div class="panel-body scrollable">
+                        <div class="empty-state">
+                            <div class="empty-icon">📚</div>
+                            <p>Select an incident to view associated runbooks and citations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel view-element" data-view="escalations">
+                    <div class="panel-header">
+                        <h3>ESCALATIONS</h3>
+                    </div>
+                    <div class="panel-body scrollable">
+                        <div class="empty-state">
+                            <div class="empty-icon">🛡️</div>
+                            <p>No active escalations. Monitor incident engine for P1 triggers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel view-element" data-view="health">
+                    <div class="panel-header">
+                        <h3>SYSTEM HEALTH</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="ai-status-panel" style="border: none; padding: 0; background: transparent;">
+                            <div class="subsystem-status">
+                                <span class="sub-label">Gemini Reasoning</span>
+                                <span class="sub-value ok">OK</span>
+                            </div>
+                            <div class="subsystem-status">
+                                <span class="sub-label">Gemini Embeddings</span>
+                                <span class="sub-value ok">OK</span>
+                            </div>
+                            <div class="subsystem-status">
+                                <span class="sub-label">FAISS Retrieval</span>
+                                <span class="sub-value ok">OK</span>
+                            </div>
+                            <div class="subsystem-status">
+                                <span class="sub-label">Incident Engine</span>
+                                <span class="sub-value ok">OK</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel view-element" data-view="settings">
+                    <div class="panel-header">
+                        <h3>SETTINGS</h3>
+                    </div>
+                    <div class="panel-body scrollable">
+                        <div class="empty-state">
+                            <div class="empty-icon">⚙</div>
+                            <p>System Configuration is currently Read-Only.</p>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -182,9 +246,10 @@
         <div class="cmd-palette-content">
             <input type="text" id="cmd-input" placeholder="Search incidents, alerts, commands..." autocomplete="off">
             <div class="cmd-results" id="cmd-results">
-                <div class="cmd-item"><span>Search incidents...</span></div>
-                <div class="cmd-item"><span>Go to Topology</span></div>
-                <div class="cmd-item"><span>Run Pipeline</span></div>
+                <div class="cmd-item" onclick="window.location.hash='overview'; document.getElementById('cmd-palette-modal').classList.add('hidden')"><span>Go to Overview</span></div>
+                <div class="cmd-item" onclick="window.location.hash='incidents'; document.getElementById('cmd-palette-modal').classList.add('hidden')"><span>Go to Incidents</span></div>
+                <div class="cmd-item" onclick="window.location.hash='topology'; document.getElementById('cmd-palette-modal').classList.add('hidden')"><span>Go to Topology</span></div>
+                <div class="cmd-item" onclick="document.getElementById('btn-analyze').click(); document.getElementById('cmd-palette-modal').classList.add('hidden')"><span>Run Pipeline</span></div>
             </div>
         </div>
     </div>
@@ -271,6 +336,6 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="/app.js?v=2"></script>
 </body>
 </html>

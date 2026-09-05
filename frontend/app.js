@@ -411,4 +411,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return isoString;
         }
     }
+
+    // Navigation Logic
+    function switchView(viewName) {
+        document.body.setAttribute('data-active-view', viewName);
+        
+        document.querySelectorAll('#sidebar-nav .nav-item').forEach(item => {
+            if(item.dataset.target === viewName) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+        
+        if (viewName === 'topology' || viewName === 'overview') {
+            setTimeout(resizeCanvas, 50);
+        }
+    }
+
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.replace('#', '') || 'overview';
+        switchView(hash);
+    });
+
+    const initialHash = window.location.hash.replace('#', '') || 'overview';
+    switchView(initialHash);
 });

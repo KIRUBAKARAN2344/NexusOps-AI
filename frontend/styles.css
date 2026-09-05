@@ -269,3 +269,50 @@ body::after {
 .cmd-results { max-height: 300px; overflow-y: auto; }
 .cmd-item { padding: 1rem 1.5rem; color: var(--text-muted); cursor: pointer; transition: background 0.2s; }
 .cmd-item:hover { background: var(--card-bg); color: var(--cyan-accent); }
+
+/* Navigation Transitions & View Logic */
+.view-element {
+    display: none !important;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body[data-active-view="overview"] .view-element[data-view~="overview"],
+body[data-active-view="alerts"] .view-element[data-view~="alerts"],
+body[data-active-view="incidents"] .view-element[data-view~="incidents"],
+body[data-active-view="topology"] .view-element[data-view~="topology"],
+body[data-active-view="runbooks"] .view-element[data-view~="runbooks"],
+body[data-active-view="escalations"] .view-element[data-view~="escalations"],
+body[data-active-view="health"] .view-element[data-view~="health"],
+body[data-active-view="settings"] .view-element[data-view~="settings"] {
+    display: flex !important;
+}
+
+body[data-active-view="overview"] .kpi-grid.view-element[data-view~="overview"] {
+    display: grid !important;
+}
+
+body[data-active-view="overview"] .content-grid.view-element[data-view~="overview"] {
+    display: grid !important;
+}
+
+/* When not in overview, the grid becomes flex so the single panel takes full width */
+body:not([data-active-view="overview"]) .content-grid.view-element {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+}
+
+body:not([data-active-view="overview"]) .right-column-grid {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+body:not([data-active-view="overview"]) .panel.view-element {
+    flex: 1;
+}
