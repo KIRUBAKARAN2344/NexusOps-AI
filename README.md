@@ -36,7 +36,7 @@ All data is synthetic and located in `data/`:
 1. Ensure you have Python 3.11 installed.
 2. Create a `.env` file with your Gemini API key:
    ```env
-   GEMINI_API_KEY=your_actual_key_here
+   GEMINI_API_KEY=AQ.Ab8RN6J-cCeSJ4mAh09xsaUnsBr1VODLNTaKc8vlXC49TtBxng
    ```
 3. Install dependencies:
    ```bash
