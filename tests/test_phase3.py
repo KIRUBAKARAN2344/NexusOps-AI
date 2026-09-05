@@ -26,20 +26,24 @@ def test_phase3():
     # Test Escalation Rule & Reasoning Engine
     engine = ReasoningEngine()
     
+    # Use anomaly_detected — this is the alert type that triggers deterministic
+    # pre-escalation (security anomalies outside standard runbook scope).
     dummy_incident = Incident(
         incident_id="INC-TEST1",
         created_at="2026-09-04T10:05:00Z",
-        priority="P1",
+        priority="P2",
         alerts=[
-            Alert(alert_id="A1", timestamp="T", device_id="D1", alert_type="link_down", severity=AlertSeverity.CRITICAL, message="Down")
+            Alert(alert_id="A1", timestamp="T", device_id="FW-1", alert_type="anomaly_detected", severity=AlertSeverity.HIGH, message="Unknown encrypted traffic spike")
         ],
-        affected_devices=["D1", "D2", "D3"]
+        affected_devices=["FW-1"]
     )
     
-    # This should trigger deterministic escalation because it's P1
+    # anomaly_detected HIGH triggers deterministic escalation before Gemini is called
     rec = engine.generate_recommendation(dummy_incident, rb)
     assert rec.requires_escalation is True
     assert "Deterministic Escalation" in rec.escalation_reason
+    # Evidence must always be populated — never show empty citations
+    assert len(rec.evidence_citations) > 0, "Evidence citations must not be empty for deterministic escalation"
 
     print("Phase 3 reasoning engine tests passed successfully!")
 
