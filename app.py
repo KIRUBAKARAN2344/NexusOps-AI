@@ -120,9 +120,9 @@ async def run_demo(scenario: str):
 
 # Serve frontend static files — mounted LAST so all /api/* routes take precedence.
 # StaticFiles with html=True will serve index.html for unknown paths (SPA mode).
-FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "frontend")
+FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "public")
 if os.path.isdir(FRONTEND_DIR):
-    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="public")
 
 if __name__ == "__main__":
     import threading
